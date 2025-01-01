@@ -1,0 +1,39 @@
+services:
+  # be:
+  #   image: aminef0/tabi3a-be:latest
+  #   build:
+  #     context: ./be
+  #     dockerfile: dockerfile
+  #     args:
+  #       platform: linux/amd64,linux/arm64/v8
+  #   ports:
+  #     - "8000:8000"
+
+  #   # env_file:
+  #   #   - .env
+
+  # fe:
+  #   image: aminef0/tabi3a-fe:latest
+  #   build:
+  #     context: ./fe
+  #     dockerfile: dockerfile
+  #     args:
+  #       platform: linux/amd64,linux/arm64/v8
+  #   environment:
+  #     - BACK_END_SERVER_URL=http://127.0.0.1:8000
+
+
+    # env_file:
+    #   - .env
+
+  sst:
+    image: aminef0/sst-fe:latest
+    build:
+      context: ./sst
+      dockerfile: dockerfile
+      platforms: 
+        - linux/amd64
+        - linux/arm/v7
+        - linux/arm/v8
+    # env_file:
+    #   - .env
