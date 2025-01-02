@@ -3,7 +3,7 @@ name: Auto Deploy with Watchtower
 on:
   push:
     branches:
-      - main
+      - deploy
 
 jobs:
   deploy:
