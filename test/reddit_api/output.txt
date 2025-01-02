@@ -1,0 +1,116 @@
+=== Test 1: Single Subreddit (Fetch Posts Only) ===
+Fetching page 1 from r/NVDA_Stock (top), time_filter=day ...
+Fetched 3 posts from r/NVDA_Stock
+ - $53 of NVDA in 2001 (ID: 1hr6wv8)
+ - From Bulls to Bears: Surviving 2025 with My NVDA Reddit Crew (ID: 1hqooaa)
+ - want to pull the trigger, but... (ID: 1hqmt3w)
+
+=== Test 2: Multiple Subreddits (Fetch Posts + Comments) ===
+Fetching page 1 from r/nvidia (top), time_filter=day ...
+Fetching page 1 from r/NVDA_Stock (top), time_filter=day ...
+Fetching comments for post 1hr03sm in r/nvidia ...
+Fetching comments for post 1hr27i5 in r/nvidia ...
+Fetching comments for post 1hr6wv8 in r/NVDA_Stock ...
+Fetching comments for post 1hqooaa in r/NVDA_Stock ...
+
+r/nvidia: 2 posts fetched.
+  Title: NVIDIA GeForce RTX 5080 reportedly launches January 21st - VideoCardz.com => 59 comments
+  Title: Nintendo Switch 2 motherboard with NVIDIA SoC leaks out - VideoCardz.com => 24 comments
+
+r/NVDA_Stock: 2 posts fetched.
+  Title: $53 of NVDA in 2001 => 49 comments
+  Title: From Bulls to Bears: Surviving 2025 with My NVDA Reddit Crew => 7 comments
+
+--- Combined Text (Truncated for Demo) ---
+=== Post #1 ===
+Title: NVIDIA GeForce RTX 5080 reportedly launches January 21st - VideoCardz.com
+Body: 
+--- Comments (Up to level 2) ---
+  - (level 1) Comment by Ziggyvertang: Just quietly waiting here with my 2070super waiting to see what upgrade options I got to me.
+    - (level 2) Comment by Mookmookmook: Same. Feels like it’s time.
+
+Not liking the sound of them being stingy with the VRAM though. 
+    - (level 2) Comment by leahcim2019: 1070 here 🤣 any upgrade will be good for me lol
+    - (level 2) Comment by Intelligent_Toe684: I’m still here with my 1070 lol think I’m gonna pass on this 50 line and settle for something like a 4070 Super
+    - (level 2) Comment by Archangel959: Right there with you. Still rocking a 1080 and waiting to see where the chips fall.
+  - (level 1) Comment by Lo_jak: The way this product stack is looking kinda signals that there is going to be a 5080ti that will sit slap bang between the 5080 and the 5090..... that will be the true "5080".
+
+What we are se ... [TRUNCATED]
+
+=== Test 3: Single Subreddit Search ===
+Found 2 posts in r/stocks about 'NVDA'
+   1. Portfolio in 2025 (score: 47)
+   2. The AI Revolution: Top 10 Tech Stocks Poised for Success in 2025 (score: 0)
+
+--- Searched Posts Combined Text (Truncated) ---
+=== Post #1 ===
+Title: Portfolio in 2025
+Body: As 2025 looms around the corner, looking at my portfolio to see if I am on the right path or needs to make some adjustments.  Any critique?
+
+GOOG, 
+AMZN, 
+T, 
+NVDA, 
+O, 
+RKLB, 
+SHW, 
+KO, 
+WBD, 
+CLM, 
+SCHD, 
+VOO
+
+Aside from this taxable account, I also own the following in my tax deferred:
+
+VFAIX, VTSAX, JEPI, VT, VYM, VTI
+
+--- No Comments (or Comments Suppressed) ---
+
+
+=== Post #2 ===
+Title: The AI Revolution: Top 10 Tech Stocks Poised for Success in 2025
+Body: Wedbush named its top 10 pick for 2025    
+   
+1. Nvidia $NVDA 
+
+2. Apple $AAPL 
+
+3. Palantir $PLTR 
+
+4. Tesla $TSLA 
+
+5. Snowflake $SNOW 
+
+6. Salesforce $CRM 
+
+7. MongoDB $MDB 
+
+8. Microsoft $MSFT 
+
+9. Alphabet $GOOGL 
+
+10. Pegasystems $PEGA
+--- No Comments (or Comments Suppressed) ---
+
+ ... [TRUNCATED]
+
+=== Test 4: Global Search ===
+Fetched 2 global results about 'NVIDIA'
+
+=== Test 5: Global Search, Fetch Comments, Flatten to Text (max_comment_level=2) ===
+Performing global search for 'NVDA', limit=2, sort=relevance, time_filter=day
+Fetching comments for post 1hr6wv8 in r/NVDA_Stock ...
+Fetching comments for post 1hr7rs2 in r/wallstreetbets ...
+
+--- Final Combined Text (Truncated for Demo) ---
+=== Post #1 ===
+Title: $53 of NVDA in 2001
+Body: Since my wife is tired of hearing about it… I thought I’d share the lucky bet I made on a local tech company a friend’s dad recommended. I figured $50 + the trade fee is about what I could afford. I think I bought 10 Bay Area micro-caps total, hoping one would outperform. 9 went bust, but NVDA is still going strong. 🙂 
+--- Comments (Up to level 2) ---
+  - (level 1) Comment by ProfessorAkaliOnYT: that is the most beautiful gain I've ever seen
+    - (level 2) Comment by Wladyslaw_Spindlesha: Dumb luck! But about time I win one. 😂
+  - (level 1) Comment by ExplorerWildfire: 24 years of patience 😂
+    - (level 2) Comment by Wladyslaw_Spindlesha: Right?! 🙂
+    - (level 2) Comment by b1ack1323: I mean $53 is a toss, are you really gonna sell that if your portfolio is like $100k or more in other investments?
+  - (level 1) Comment by riri101628: I should've invested my pocket money when I was in kindergarten😭
+    - (level 2) Comment by silent-dan ... [TRUNCATED]
