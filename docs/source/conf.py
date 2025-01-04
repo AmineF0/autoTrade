@@ -2,9 +2,9 @@
 
 # -- Project information
 
-project = 'Lumache'
-copyright = '2021, Graziella'
-author = 'Graziella'
+project = 'AutoTrade'
+copyright = '2024, ENSAM'
+author = 'Firdawsi Amine'
 
 release = '0.1'
 version = '0.1.0'
