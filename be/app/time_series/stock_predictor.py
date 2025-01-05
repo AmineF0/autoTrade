@@ -147,7 +147,12 @@ class StockPredictor:
             pickle.dump(model, file)
     
     
-    def train(self):
+    def train(self, force: bool = False):
+        
+        # TODO : detect the expiry of the model using the json file, json create name path of the model
+        # diff( now - created ) > cst train else skip
+        # if force is True, train the model
+        
         self.train_lstm_univariate()
         self.train_lstm_multivariante()
         self.train_mlp_univariante()
