@@ -7,9 +7,9 @@ class Predictor:
         for stock in stocks:
             self.predictors[stock] = StockPredictor(stock_name=stock,interval=interval,period=period)
         
-    def train(self):
+    def train(self, force=False):
         for stock in self.predictors.values():
-            stock.train()
+            stock.train(force)
     
     def forecast_nhours(self,n_hours:int=7):
         forecast = {}

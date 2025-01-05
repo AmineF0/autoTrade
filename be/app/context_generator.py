@@ -1,12 +1,13 @@
 from trader import Trader, get_scoped_session
 from time_series.predictor import Predictor
 from social_media_analysis.reddit_sentiment_analysis import get_sentiment_analysis_for_stocks
+from news.news_sentiment import NewsSentimentAnalyzer
 
-def generate_context(trader: Trader, session, predictor: Predictor):
+def generate_context(trader: Trader, session, predictor: Predictor, news_analyzer: NewsSentimentAnalyzer):
     """
     Generate context for the dashboard.
     """
-    predictor.train()
+    predictor.train(force=False)
     
     # Get performance stats
     performance_stats = trader.get_performance_stats(session, predictor.get_current_prices())
@@ -16,6 +17,8 @@ def generate_context(trader: Trader, session, predictor: Predictor):
 
     # Get sentiment analysis
     sentiment_analysis = get_sentiment_analysis_for_stocks()
+    
+    
 
     return {
         "trade_summary": {
@@ -28,8 +31,9 @@ def generate_context(trader: Trader, session, predictor: Predictor):
             "realized_profit_by_stock": performance_stats["realized_profit_by_stock"]
         },
         "performance_stats": performance_stats,
-        # "forecast": forecast,
-        "sentiment_analysis": sentiment_analysis
+        "forecast": forecast,
+        "sentiment_analysis": sentiment_analysis,
+        "news_sentiment": news_analyzer.compare_sentiment_stocks()
     }
     
     
@@ -46,5 +50,6 @@ if __name__ == "__main__":
       trader = session.query(Trader).first()
       
     predictor = Predictor()
-    context = generate_context(trader, session,  predictor)
+    news_analyzer = NewsSentimentAnalyzer() 
+    context = generate_context(trader, session,  predictor, news_analyzer)
     print(context)

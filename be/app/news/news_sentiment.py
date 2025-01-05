@@ -1,10 +1,10 @@
-from rss.news_fetcher import FinancialNewsFetcher
-from rss.sentiment_analyzer import FinancialSentimentAnalyzer
+from .rss.news_fetcher import FinancialNewsFetcher
+from .rss.sentiment_analyzer import FinancialSentimentAnalyzer
 from datetime import datetime, timedelta
 import logging
 
-from alphavantage.api_rotator import APIKeyRotator
-from alphavantage.stock_analyzer import StockNewsAnalyzer
+from .alphavantage.api_rotator import APIKeyRotator
+from .alphavantage.stock_analyzer import StockNewsAnalyzer
 
 
 class NewsSentimentAnalyzer:
@@ -24,6 +24,8 @@ class NewsSentimentAnalyzer:
     'TSLA': ['Tesla', 'Tesla stock', 'TSLA ticker', 'NASDAQ:TSLA', 'Tesla earnings', 'Tesla revenue', 'Tesla market cap', 'electric vehicles sector', 'renewable energy', 'Elon Musk leadership', 'Tesla quarterly reports', 'automotive sector'],
     'NVDA': ['Nvidia', 'Nvidia stock', 'NVDA ticker', 'NASDAQ:NVDA', 'Nvidia earnings', 'Nvidia revenue', 'Nvidia market cap', 'semiconductor sector', 'graphics processing units', 'artificial intelligence', 'Nvidia quarterly reports', 'data center growth']
     }
+    
+    cache = {}
 
     
     def __init__(self, stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NVDA']):
@@ -48,7 +50,11 @@ class NewsSentimentAnalyzer:
     def get_alphavantage_sentiment_stock(self, stock:str, days:int=7):
         return self.stock_analyzer.get_sentiment_timeline(stock, days)
       
-    def compare_sentiment_stocks(self, stocks:list=None, days:int=7):
+    def compare_sentiment_stocks(self, stocks:list=None, days:int=45, force=False):
+        
+        if not force and "rss_sentiments" in self.cache:
+            return self.cache["rss_sentiments"], self.cache["comparison"]
+        
         if not stocks:
             stocks = self.stocks
             
@@ -59,6 +65,11 @@ class NewsSentimentAnalyzer:
         for stock in stocks:
             rss_sentiments[stock] = self.get_rss_sentiment_stock(stock, days)
             # alphavantage_sentiments[stock] = self.get_alphavantage_sentiment_stock(stock, days)
+            
+        self.cache["rss_sentiments"] = rss_sentiments
+        # cache["alphavantage_sentiments"] = alphavantage_sentiments
+        self.cache["comparison"] = comparison
+        
         return rss_sentiments, comparison
       
 
