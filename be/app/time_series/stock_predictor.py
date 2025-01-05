@@ -10,6 +10,9 @@ from sklearn.neural_network import MLPRegressor
 import pickle
 import os
 import json
+import warnings
+
+warnings.filterwarnings("ignore")
 
 
 class StockPredictor:
@@ -37,7 +40,6 @@ class StockPredictor:
         for i in range(len(data) - window_size - 1):
             X.append(data[i:(i + window_size)])
             y.append(data[i + window_size])
-        print(np.array(X).shape)
         return np.array(X), np.array(y).reshape(-1, 1)
     
     def window_data_multivariate(self,data,close_data, window_size):
@@ -70,7 +72,7 @@ class StockPredictor:
         return model
     
     def build_mlp_model(self):
-        model_mlp = MLPRegressor(hidden_layer_sizes=(128, 64), max_iter=100, verbose=True)
+        model_mlp = MLPRegressor(hidden_layer_sizes=(128, 64), max_iter=100, verbose=False)
         return model_mlp
     
     def get_current_price(self):
@@ -82,7 +84,6 @@ class StockPredictor:
         data_close = self.data['Close']
         df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
         df_windowed_reshaped = df_windowed.reshape(df_windowed.shape[0], -1)
-        print(df_windowed.shape,df_target.shape,df_windowed_reshaped.shape)
         x_scaler = scaler.fit(df_windowed_reshaped)
         df_windowed_reshaped = x_scaler.transform(df_windowed_reshaped)
         df_windowed = df_windowed_reshaped.reshape(df_windowed.shape[0], df_windowed.shape[1], df_windowed.shape[2])
@@ -96,7 +97,7 @@ class StockPredictor:
         model = self.build_lstm_model(X_train)
         model.fit(X_train, y_train, epochs=100,batch_size=32,    
             validation_split=0.1,
-            verbose=1)
+            verbose=0)
 
         model.save(f'models/{self.stock_name}/LSTM_univariate.h5')
      
@@ -119,7 +120,7 @@ class StockPredictor:
         model = self.build_lstm_model(X_train)
         model.fit(X_train, y_train, epochs=100,batch_size=32,    
             validation_split=0.1,
-            verbose=1)
+            verbose=0)
 
         model.save(f'models/{self.stock_name}/LSTM_multivariate.h5')   
         
@@ -128,7 +129,6 @@ class StockPredictor:
         data_close = self.data['Close']
         df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
         df_windowed_reshaped = df_windowed.reshape(df_windowed.shape[0], -1)
-        print(df_windowed.shape,df_target.shape,df_windowed_reshaped.shape)
         x_scaler = scaler.fit(df_windowed_reshaped)
         df_windowed_reshaped = x_scaler.transform(df_windowed_reshaped)
         df_windowed = df_windowed_reshaped.reshape(df_windowed.shape[0], df_windowed.shape[1], df_windowed.shape[2])
@@ -162,7 +162,6 @@ class StockPredictor:
                     creation_date = dt.datetime.fromtimestamp(creation_date)
                     now = dt.datetime.now()
                     diff = (now - creation_date).total_seconds()
-                    print(diff)
                     return diff > EXPIRY_CST
                 
     
@@ -172,7 +171,6 @@ class StockPredictor:
         # diff( now - created ) > cst train else skip
         # if force is True, train the model
         if force or self.model_expiry():
-            print("OK")
             self.train_lstm_univariate()
             self.train_lstm_multivariante()
             self.train_mlp_univariante()
@@ -197,8 +195,6 @@ class StockPredictor:
     def forecast_lstm_univariante(self,n_hours:int=7):
         model_dir = f'models/{self.stock_name}/LSTM_univariate.h5'
         model = tf.keras.models.load_model(model_dir)
-        ## forecast for n hours
-        print(model_dir)
         forecast = []
         data_close = self.data['Close']
         df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
@@ -215,7 +211,6 @@ class StockPredictor:
             X = X.reshape(1, X.shape[0], X.shape[1])
             y_pred = model.predict(X)
             forecast.append(y_pred)
-            print(forecast)
             X = np.concatenate((X[0][1:], y_pred))
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
@@ -223,7 +218,6 @@ class StockPredictor:
         model_dir = f'models/{self.stock_name}/LSTM_multivariate.h5'
         model = tf.keras.models.load_model(model_dir)
         ## forecast for n hours
-        print(model_dir)
         forecast = []
         data = self.data[['Close', 'High', 'Low', 'Volume']]
         data_close = self.data['Close']

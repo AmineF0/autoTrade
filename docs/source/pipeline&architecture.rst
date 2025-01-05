@@ -1,7 +1,7 @@
 Architecture Overview
 ======================
 
-.. figure:: architecture.png
+.. figure:: ./images/architecture.png
    :alt: AUTOtrade System Architecture
    :align: center
 
