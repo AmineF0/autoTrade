@@ -147,7 +147,7 @@ class StockPredictor:
             pickle.dump(model, file)
     
     def model_expiry(self):
-        EXPIRY_CST = 2*60
+        EXPIRY_CST = 2*60*60
         models = ["MLP_univaraite","LSTM_univariate","LSTM_multivariate"]
         # check if json file with name models_manager exist in models folder 
         if not os.path.exists(f'models/{self.stock_name}/models_manager.json'):

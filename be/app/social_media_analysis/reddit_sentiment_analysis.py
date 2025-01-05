@@ -160,7 +160,6 @@ def get_sentiment_analysis_for_stock(stock):
     parser = RedditParser(text)
 
     data = parser.process_and_save()
-    print(data)
     # END OF SCRAPING AND PARSING
 
 
@@ -219,7 +218,6 @@ def get_sentiment_analysis_for_stock(stock):
     # Save summary
     df = pd.DataFrame(summary_data)
     result = summarize_analysis(df)
-    print(result)
     
     return result
 

@@ -1,7 +1,7 @@
 import pandas as pd
 from typing import List, Dict, Optional, Union
 from datetime import datetime, timedelta
-from api_rotator import APIKeyRotator
+from .api_rotator import APIKeyRotator
 
 class StockNewsAnalyzer:
     def __init__(self, api_rotator: APIKeyRotator):
