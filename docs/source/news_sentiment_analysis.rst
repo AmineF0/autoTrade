@@ -173,7 +173,7 @@ Distribution Analysis
 
 The system can generate comparative sentiment distribution visualizations across multiple tickers:
 
-.. figure:: compdist.png
+.. figure:: ./images/compdist.png
    :alt: Sentiment Distribution Comparison
    :width: 100%
    
@@ -208,7 +208,7 @@ Temporal Analysis
 
 The system provides temporal analysis of sentiment trends across companies:
 
-.. figure:: comp_time.png
+.. figure:: ./images/comp_time.png
    :alt: Sentiment Comparison Over Time
    :width: 100%
    
@@ -236,7 +236,7 @@ Source Analysis
 
 The system provides analysis of sentiment patterns across different news sources:
 
-.. figure:: nvda_example.png
+.. figure:: ./images/nvda_example.png
    :alt: Average Sentiment by News Source
    :width: 100%
    

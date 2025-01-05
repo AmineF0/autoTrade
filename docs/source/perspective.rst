@@ -8,7 +8,7 @@ Reinforcement Learning Integration
 
 We aim to add a reinforcement learning framework for our trading agent:
 
-.. figure:: rl.png
+.. figure:: ./images/rl.png
   :alt: Reinforcement Learning Trading Workflow
   :width: 100%
   :align: center

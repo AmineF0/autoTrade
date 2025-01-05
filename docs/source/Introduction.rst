@@ -27,7 +27,7 @@ Our project addresses these challenges through a system that aims to:
 * Implement a robust decision engine that operates independently of human emotional biases
 * Build a modular and maintainable architecture that provides clear visibility into the trading logic and decision process
 
-.. figure:: complexity.png
+.. figure:: ./images/complexity.png
    :alt: Market Complexity Visualization
    :width: 100%
    
