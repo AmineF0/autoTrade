@@ -1,13 +1,11 @@
-Welcome to Lumache's documentation!
+Welcome to AUTOtrade's documentation!
 ===================================
 
-**Lumache** (/lu'make/) is a Python library for cooks and food lovers
-that creates recipes mixing random ingredients.
-It pulls data from the `Open Food Facts database <https://world.openfoodfacts.org/>`_
-and offers a *simple* and *intuitive* API.
+**AUTOtrade** is a Python-based trading assistant that helps investors make informed decisions by analyzing stocks through multiple data sources. It combines web scraping, sentiment analysis, and time series forecasting to generate buy/sell recommendations.
 
-Check out the :doc:`usage` section for further information, including
-how to :ref:`installation` the project.
+The system aggregates data from news sources, Reddit discussions, and historical market data to provide comprehensive market insights through an *intuitive* and *data-driven* approach.
+
+Check out the :doc:`usage` section for further information, including how to :ref:`installation` the project.
 
 .. note::
 
@@ -20,4 +18,8 @@ Contents
 
    usage
    api
+   Introduction
+   pipeline&architecture
+   detailed_explanation
+   perspective
    Reddit_Sentiment_Analyzer.rst
