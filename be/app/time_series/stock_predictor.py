@@ -3,11 +3,13 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout,SimpleRNN,BatchNormalization,GRU
 from tensorflow.keras.optimizers import Adam
+import datetime as dt
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.neural_network import MLPRegressor
 import pickle
 import os
+import json
 
 
 class StockPredictor:
@@ -19,9 +21,7 @@ class StockPredictor:
         self.window_size = window_size
         self.data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         self.data = self.data.dropna()
-        print(self.data.columns)
-        cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        self.data.columns = cols
+        self.data.columns = self.data.columns.droplevel(1) 
     
     def get_stock_data(self):
         stock_data = yf.download(self.stock_name, period=self.period,interval=self.interval)
@@ -146,16 +146,53 @@ class StockPredictor:
         with open(f'models/{self.stock_name}/MLP_univaraite.pkl', 'wb') as file:
             pickle.dump(model, file)
     
+    def model_expiry(self):
+        EXPIRY_CST = 2*60
+        models = ["MLP_univaraite","LSTM_univariate","LSTM_multivariate"]
+        # check if json file with name models_manager exist in models folder 
+        if not os.path.exists(f'models/{self.stock_name}/models_manager.json'):
+            return True
+        with open(f'models/{self.stock_name}/models_manager.json', 'r') as file:
+            data = json.load(file)
+            for model in models:
+                if model not in data:
+                    return True
+                else:
+                    creation_date = data[model]['creation_date']
+                    creation_date = dt.datetime.fromtimestamp(creation_date)
+                    now = dt.datetime.now()
+                    diff = (now - creation_date).total_seconds()
+                    print(diff)
+                    return diff > EXPIRY_CST
+                
     
     def train(self, force: bool = False):
         
         # TODO : detect the expiry of the model using the json file, json create name path of the model
         # diff( now - created ) > cst train else skip
         # if force is True, train the model
-        
-        self.train_lstm_univariate()
-        self.train_lstm_multivariante()
-        self.train_mlp_univariante()
+        if force or self.model_expiry():
+            print("OK")
+            self.train_lstm_univariate()
+            self.train_lstm_multivariante()
+            self.train_mlp_univariante()
+            data = {
+                    "MLP_univaraite":{
+                        'path':f'models/{self.stock_name}/MLP_univaraite.pkl',
+                        "creation_date":dt.datetime.now().timestamp()
+                    },
+                    "LSTM_univariate":{
+                        'path':f'models/{self.stock_name}/LSTM_univariate.h5',
+                        "creation_date":dt.datetime.now().timestamp()
+                    },
+                    "LSTM_multivariate":{
+                        'path':f'models/{self.stock_name}/LSTM_multivariate.h5',
+                        "creation_date":dt.datetime.now().timestamp()
+                    }
+                }
+            with open(f'models/{self.stock_name}/models_manager.json', 'w') as file:
+                json.dump(data, file)
+            
     
     def forecast_lstm_univariante(self,n_hours:int=7):
         model_dir = f'models/{self.stock_name}/LSTM_univariate.h5'

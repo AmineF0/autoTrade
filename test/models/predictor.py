@@ -1,7 +1,7 @@
 from stock_predictor import StockPredictor
 
 class Predictor:
-    def __init__(self,interval="1h",period="2y",stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA']):
+    def __init__(self,interval="1h",period="2y",stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NVDA']):
         self.stocks = stocks
         self.predictors = {}
         for stock in stocks:

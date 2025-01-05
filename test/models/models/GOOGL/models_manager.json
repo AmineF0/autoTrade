@@ -1,0 +1,1 @@
+{"MLP_univaraite": {"path": "models/GOOGL/MLP_univaraite.pkl", "creation_date": 1736106432.41722}, "LSTM_univariate": {"path": "models/GOOGL/LSTM_univariate.h5", "creation_date": 1736106432.41722}, "LSTM_multivariate": {"path": "models/GOOGL/LSTM_multivariate.h5", "creation_date": 1736106432.41722}}
