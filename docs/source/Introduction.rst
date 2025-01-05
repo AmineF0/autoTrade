@@ -29,7 +29,7 @@ Our project addresses these challenges through a system that aims to:
 
 .. figure:: ./images/complexity.png
    :alt: Market Complexity Visualization
-   :width: 100%
+   :width: 80%
    
    Visual representation of the multiple factors influencing modern financial markets
 

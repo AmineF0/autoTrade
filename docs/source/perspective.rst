@@ -10,7 +10,7 @@ We aim to add a reinforcement learning framework for our trading agent:
 
 .. figure:: ./images/rl.png
   :alt: Reinforcement Learning Trading Workflow
-  :width: 100%
+  :width: 80%
   :align: center
 
 The RL agent will learn optimal trading strategies through continuous interaction with the market environment, utilizing:

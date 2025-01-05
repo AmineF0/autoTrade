@@ -174,8 +174,8 @@ Distribution Analysis
 The system can generate comparative sentiment distribution visualizations across multiple tickers:
 
 .. figure:: ./images/compdist.png
-   :alt: Sentiment Distribution Comparison
-   :width: 100%
+   :alt: Sentiment Distribution comparison
+   :width: 80%
    
    Sentiment distribution comparison for NVIDIA, AMD, and Intel showing the frequency of different sentiment scores.
 
@@ -210,7 +210,7 @@ The system provides temporal analysis of sentiment trends across companies:
 
 .. figure:: ./images/comp_time.png
    :alt: Sentiment Comparison Over Time
-   :width: 100%
+   :width: 80%
    
    Temporal comparison of sentiment scores across NVIDIA, AMD, and Intel showing trends and patterns.
 
@@ -238,7 +238,7 @@ The system provides analysis of sentiment patterns across different news sources
 
 .. figure:: ./images/nvda_example.png
    :alt: Average Sentiment by News Source
-   :width: 100%
+   :width: 60%
    
    Analysis of average sentiment scores across different news sources, showing variation in reporting sentiment.
 
