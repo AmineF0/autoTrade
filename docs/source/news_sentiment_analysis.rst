@@ -238,7 +238,7 @@ The system provides analysis of sentiment patterns across different news sources
 
 .. figure:: ./images/nvda_example.png
    :alt: Average Sentiment by News Source
-   :width: 60%
+   :width: 30%
    
    Analysis of average sentiment scores across different news sources, showing variation in reporting sentiment.
 
