@@ -79,10 +79,8 @@ class StockPredictor:
         stock_data = yf.download(self.stock_name, period='2y',interval='1h')
         return stock_data['Close'].to_numpy()[-1]
     
-    def train_lstm_univariate(self):
+    def preprocess_data(self,df_windowed,df_target):
         scaler = MinMaxScaler()
-        data_close = self.data['Close']
-        df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
         df_windowed_reshaped = df_windowed.reshape(df_windowed.shape[0], -1)
         print(df_windowed.shape,df_target.shape,df_windowed_reshaped.shape)
         x_scaler = scaler.fit(df_windowed_reshaped)
@@ -95,29 +93,28 @@ class StockPredictor:
         y_train = df_target[:train_size]
         X_test = df_windowed[train_size:]
         y_test = df_target[train_size:]
+        return X_train,y_train,X_test,y_test
+        
+    def train_lstm_univariate(self):
+        scaler = MinMaxScaler()
+        data_close = self.data['Close']
+        df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
+        X_train,y_train,X_test,y_test = self.preprocess_data(df_windowed,df_target)
         model = self.build_lstm_model(X_train)
         model.fit(X_train, y_train, epochs=100,batch_size=32,    
             validation_split=0.1,
             verbose=1)
 
         model.save(f'models/{self.stock_name}/LSTM_univariate.h5')
-     
+    
+
+    
     def train_lstm_multivariante(self):
         scaler = MinMaxScaler()
         data = self.data[['Close', 'High', 'Low', 'Volume']]
         data_close = self.data['Close']
         df_windowed,df_target = self.window_data_multivariate(data.to_numpy(),data_close.to_numpy().reshape(-1,1),self.window_size)
-        df_windowed_reshaped = df_windowed.reshape(df_windowed.shape[0], -1)
-        x_scaler = scaler.fit(df_windowed_reshaped)
-        df_windowed_reshaped = x_scaler.transform(df_windowed_reshaped)
-        df_windowed = df_windowed_reshaped.reshape(df_windowed.shape[0], df_windowed.shape[1], df_windowed.shape[2])
-        y_scaler = scaler.fit(df_target)
-        df_target = y_scaler.transform(df_target)
-        train_size = int(self.split_ratio*len(df_windowed))
-        X_train = df_windowed[:train_size]
-        y_train = df_target[:train_size]
-        X_test = df_windowed[train_size:]
-        y_test = df_target[train_size:]
+        X_train,y_train,X_test,y_test = self.preprocess_data(df_windowed,df_target)
         model = self.build_lstm_model(X_train)
         model.fit(X_train, y_train, epochs=100,batch_size=32,    
             validation_split=0.1,
@@ -129,18 +126,7 @@ class StockPredictor:
         scaler = MinMaxScaler()
         data_close = self.data['Close']
         df_windowed,df_target = self.window_data_univariate(data_close.to_numpy().reshape(-1,1),self.window_size)
-        df_windowed_reshaped = df_windowed.reshape(df_windowed.shape[0], -1)
-        print(df_windowed.shape,df_target.shape,df_windowed_reshaped.shape)
-        x_scaler = scaler.fit(df_windowed_reshaped)
-        df_windowed_reshaped = x_scaler.transform(df_windowed_reshaped)
-        df_windowed = df_windowed_reshaped.reshape(df_windowed.shape[0], df_windowed.shape[1], df_windowed.shape[2])
-        y_scaler = scaler.fit(df_target)
-        df_target = y_scaler.transform(df_target)
-        train_size = int(self.split_ratio*len(df_windowed))
-        X_train = df_windowed[:train_size]
-        y_train = df_target[:train_size]
-        X_test = df_windowed[train_size:]
-        y_test = df_target[train_size:]
+        X_train,y_train,X_test,y_test = self.preprocess_data(df_windowed,df_target)
         model = self.build_mlp_model()
         model.fit(X_train.reshape(X_train.shape[0],-1), y_train)
         output_dir = f'models/{self.stock_name}'
@@ -229,7 +215,7 @@ class StockPredictor:
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
     
-    def forecast_nhours(self,n_hours:int=7):
+    def forecast(self,n_hours:int=7):
         return {
             'LSTM_univariate':self.forecast_lstm_univariante(n_hours),
             'LSTM_multivariate':self.forecast_lstm_multivariante(n_hours),
@@ -252,7 +238,7 @@ class Predictor:
         for stock in self.predictors.values():
             stock.train()
     
-    def forecast_nhours(self,n_hours:int=7):
+    def forecast(self,n_hours:int=7):
         forecast = {}
         for stock in self.predictors.values():
             forecast[stock.stock_name] = stock.forecast_nhours(n_hours)
