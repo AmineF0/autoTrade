@@ -16,8 +16,7 @@ Contents
 
 .. toctree::
 
-   usage
-   api
+
    Introduction
    pipeline&architecture
    news_sentiment_analysis
