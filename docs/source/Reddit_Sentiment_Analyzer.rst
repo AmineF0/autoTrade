@@ -98,7 +98,7 @@ Results
 
 Generated Visualizations
 ~~~~~~~~~~~~~~~~~~~~~
-.. image:: sentiment_distribution.jpeg
+.. figure:: ./images/sentiment_distribution.jpeg
   :alt: Sentiment Distribution
   :align: center
 
