@@ -280,3 +280,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+be/app/models/
+
+be/app/db.sqlite

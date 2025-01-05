@@ -20,3 +20,4 @@ Contents
 
    usage
    api
+   Reddit_Sentiment_Analyzer.rst
