@@ -13,7 +13,7 @@ import pickle
 import os
 
 
-class StockPredector:
+class StockPredictor:
     def __init__(self,stock_name='AAPL',interval="1h",period="2y",split_ratio=0.9,window_size=6):
         self.stock_name = stock_name
         self.split_ratio = split_ratio
@@ -246,7 +246,7 @@ class Predictor:
         self.stocks = stocks
         self.predictors = {}
         for stock in stocks:
-            self.predictors[stock] = StockPredector(stock_name=stock,interval=interval,period=period)
+            self.predictors[stock] = StockPredictor(stock_name=stock,interval=interval,period=period)
         
     def train(self):
         for stock in self.predictors.values():
