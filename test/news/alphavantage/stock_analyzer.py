@@ -3,9 +3,10 @@ from typing import List, Dict, Optional, Union
 from datetime import datetime, timedelta
 import numpy as np
 from pprint import pprint
+from api_rotator import APIKeyRotator
 
 class StockNewsAnalyzer:
-    def __init__(self, api_rotator: 'APIKeyRotator'):
+    def __init__(self, api_rotator: APIKeyRotator):
         """
         Initialize the Stock News Analyzer with an API key rotator
         

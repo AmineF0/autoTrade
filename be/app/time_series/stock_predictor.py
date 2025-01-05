@@ -1,7 +1,4 @@
-import pandas as pd
 import yfinance as yf
-import datetime as dt
-import matplotlib.pyplot as plt
 import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout,SimpleRNN,BatchNormalization,GRU
@@ -14,7 +11,7 @@ import os
 
 
 class StockPredictor:
-    def __init__(self,stock_name='AAPL',interval="1h",period="2y",split_ratio=0.9,window_size=6):
+    def __init__(self,stock_name='AAPL',interval="1h",period="2y",split_ratio=1,window_size=6):
         self.stock_name = stock_name
         self.split_ratio = split_ratio
         self.period = period
@@ -22,13 +19,14 @@ class StockPredictor:
         self.window_size = window_size
         self.data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         self.data = self.data.dropna()
-        cols = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+        print(self.data.columns)
+        cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         self.data.columns = cols
     
     def get_stock_data(self):
         stock_data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         stock_data = stock_data.dropna()
-        cols = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
+        cols = ['Open', 'High', 'Low', 'Close', 'Volume']
         stock_data.columns = cols
         return stock_data
     
@@ -241,26 +239,3 @@ class StockPredictor:
         
             
             
-class Predictor:
-    def __init__(self,interval="1h",period="2y",stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA']):
-        self.stocks = stocks
-        self.predictors = {}
-        for stock in stocks:
-            self.predictors[stock] = StockPredictor(stock_name=stock,interval=interval,period=period)
-        
-    def train(self):
-        for stock in self.predictors.values():
-            stock.train()
-    
-    def forecast_nhours(self,n_hours:int=7):
-        forecast = {}
-        for stock in self.predictors.values():
-            forecast[stock.stock_name] = stock.forecast_nhours(n_hours)
-        return forecast
-    
-    def get_current_prices(self):
-        prices = {}
-        for stock in self.predictors.values():
-            prices[stock.stock_name] = stock.get_current_price()
-        return prices
-    
