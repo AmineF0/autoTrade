@@ -20,6 +20,8 @@ Contents
    api
    Introduction
    pipeline&architecture
-   detailed_explanation
+   news_sentiment_analysis
+   Reddit_Sentiment_Analyzer
+   timeseries
    perspective
-   Reddit_Sentiment_Analyzer.rst
+   
