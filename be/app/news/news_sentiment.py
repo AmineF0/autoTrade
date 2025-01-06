@@ -28,7 +28,7 @@ class NewsSentimentAnalyzer:
     cache = {}
 
     
-    def __init__(self, stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NVDA']):
+    def __init__(self, stocks=['AMZN', 'MSFT', 'TSLA', 'NVDA']):
         self.logger = logging.getLogger(__name__)
         self.fetcher = FinancialNewsFetcher()
         self.analyzer = FinancialSentimentAnalyzer()

@@ -5,7 +5,7 @@ class Constants:
     DAY= "1d"
     HOUR= "1h"
 class Predictor:
-    def __init__(self,interval="1h",period="2y",stocks=['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NVDA']):
+    def __init__(self,interval="1h",period="2y",stocks=['AMZN', 'MSFT', 'TSLA', 'NVDA']):
         self.stocks = stocks
         self.predictors = {}
         for stock in stocks:
