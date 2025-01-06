@@ -152,6 +152,9 @@ class FinancialSentimentAnalyzer:
                 text_columns.append('summary')
                 
         if not text_columns:
+            return result_df
+            
+            
             raise ValueError("No text columns found or specified")
         
         # Combine texts for analysis

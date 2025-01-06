@@ -266,7 +266,7 @@ class StockPredictor:
     def forecast(self,n_instances:int=7):
         return {
             'LSTM_univariate':self.forecast_lstm_univariante(n_instances),
-            'LSTM_multivariate':self.forecast_lstm_multivariante(n_instances),
+            # 'LSTM_multivariate':self.forecast_lstm_multivariante(n_instances),
             'MLP_univariate':self.forecast_mlp_univariate(n_instances)
         }
     

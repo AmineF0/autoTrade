@@ -11,15 +11,7 @@ def generate_context(trader: Trader, session, predictor: Predictor, news_analyze
     
     # Get performance stats
     performance_stats = trader.get_performance_stats(session, predictor.get_current_prices())
-
-    # Get forecast
-    forecast = predictor.forecast_nhours()
-
-    # Get sentiment analysis
-    sentiment_analysis = get_sentiment_analysis_for_stocks()
     
-    
-
     return {
         "trade_summary": {
             "current_balance": performance_stats["current_balance"],
@@ -28,12 +20,14 @@ def generate_context(trader: Trader, session, predictor: Predictor, news_analyze
             "total_equity": performance_stats["total_equity"],
             "holdings": performance_stats["holdings"],
             "holdings_value": performance_stats["holdings_value"],
-            "realized_profit_by_stock": performance_stats["realized_profit_by_stock"]
+            "realized_profit_by_stock": performance_stats["realized_profit_by_stock"],
+            "current_prices": predictor.get_current_prices()
         },
-        "performance_stats": performance_stats,
-        "forecast": forecast,
-        "sentiment_analysis": sentiment_analysis,
-        "news_sentiment": news_analyzer.compare_sentiment_stocks()
+        "sentiment_analysis": {
+            "reddit": get_sentiment_analysis_for_stocks(),
+            "news": news_analyzer.compare_sentiment_stocks()
+        },
+        "forecast": predictor.forcast_and_format(),
     }
     
     
