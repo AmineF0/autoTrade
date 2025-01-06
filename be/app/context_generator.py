@@ -1,4 +1,4 @@
-from trader import Trader, get_scoped_session
+from trader.trader import Trader, get_scoped_session
 from time_series.predictor import Predictor
 from social_media_analysis.reddit_sentiment_analysis import get_sentiment_analysis_for_stocks
 from news.news_sentiment import NewsSentimentAnalyzer
@@ -45,5 +45,5 @@ if __name__ == "__main__":
       
     predictor = Predictor()
     news_analyzer = NewsSentimentAnalyzer() 
-    context = generate_context(trader, session,  predictor, news_analyzer)
+    context = generate_context(trader, session, predictor, news_analyzer)
     print(context)

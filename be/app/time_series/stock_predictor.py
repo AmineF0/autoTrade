@@ -143,16 +143,18 @@ class StockPredictor:
         model.fit(X_train.reshape(X_train.shape[0],-1), y_train)
         output_dir = f'models/{self.stock_name}'
         os.makedirs(output_dir, exist_ok=True)
-        with open(f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl', 'wb') as file:
+        with open(f'models/{self.stock_name}/MLP_univariate_{self.period}_{self.interval}.pkl', 'wb') as file:
             pickle.dump(model, file)
     
     def model_expiry(self):
         EXPIRY_CST = 2*60*60
-        models = [f"MLP_univaraite__{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",f"LSTM_multivariate_{self.period}_{self.interval}"]
+        models = [f"MLP_univariate__{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",
+                #   f"LSTM_multivariate_{self.period}_{self.interval}"
+                ]
         # check if json file with name models_manager exist in models folder 
-        if not os.path.exists(f'models/{self.stock_name}/models_manager.json'):
+        if not os.path.exists(f'models/{self.stock_name}/models_manager_{self.period}_{self.interval}.json'):
             return True
-        with open(f'models/{self.stock_name}/models_manager.json', 'r') as file:
+        with open(f'models/{self.stock_name}/models_manager_{self.period}_{self.interval}.json', 'r') as file:
             data = json.load(file)
             for model in models:
                 if model not in data:
@@ -172,23 +174,23 @@ class StockPredictor:
         # if force is True, train the model
         if force or self.model_expiry():
             self.train_lstm_univariate()
-            self.train_lstm_multivariante()
+            # self.train_lstm_multivariante()
             self.train_mlp_univariante()
             data = {
-                    f"MLP_univaraite_{self.period}_{self.interval}":{
-                        'path':f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl',
+                    f"MLP_univariate_{self.period}_{self.interval}":{
+                        'path':f'models/{self.stock_name}/MLP_univariate_{self.period}_{self.interval}.pkl',
                         "creation_date":dt.datetime.now().timestamp()
                     },
                     f"LSTM_univariate_{self.period}_{self.interval}.h5":{
                         'path':f'models/{self.stock_name}/LSTM_univariate_{self.period}_{self.interval}.h5',
                         "creation_date":dt.datetime.now().timestamp()
                     },
-                    f"LSTM_multivariate_{self.period}_{self.interval}":{
-                        'path':f'models/{self.stock_name}/LSTM_multivariate_{self.period}_{self.interval}.h5',
-                        "creation_date":dt.datetime.now().timestamp()
-                    }
+                    # f"LSTM_multivariate_{self.period}_{self.interval}":{
+                    #     'path':f'models/{self.stock_name}/LSTM_multivariate_{self.period}_{self.interval}.h5',
+                    #     "creation_date":dt.datetime.now().timestamp()
+                    # }
                 }
-            with open(f'models/{self.stock_name}/models_manager.json', 'w') as file:
+            with open(f'models/{self.stock_name}/models_manager_{self.period}_{self.interval}.json', 'w') as file:
                 json.dump(data, file)
             
     
@@ -241,7 +243,7 @@ class StockPredictor:
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
     def forecast_mlp_univariate(self,n_instances):
-        model_dir = f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl'
+        model_dir = f'models/{self.stock_name}/MLP_univariate_{self.period}_{self.interval}.pkl'
         with open(model_dir, 'rb') as file:
             model = pickle.load(file)
         data_close = self.data['Close']
