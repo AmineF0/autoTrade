@@ -223,7 +223,7 @@ def get_sentiment_analysis_for_stock(stock):
 
 def get_sentiment_analysis_for_stocks():
     
-    stocks = ['AAPL', 'AMZN', 'GOOGL', 'MSFT', 'TSLA', 'NVDA']
+    stocks = ['AMZN', 'MSFT', 'TSLA', 'NVDA']
     
     results = {}
     
