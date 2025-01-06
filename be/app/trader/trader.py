@@ -38,6 +38,7 @@ class Trader(Base):
     balance = Column(Float, nullable=False, default=0.0)
 
     transactions = relationship("Transaction", back_populates="trader", cascade="all, delete-orphan")
+    thoughts = relationship("Thought", back_populates="trader", cascade="all, delete-orphan")
 
     def buy_stock(self, session, symbol: str, quantity: int, price: float):
         """
@@ -165,12 +166,13 @@ class Trader(Base):
         - total realized profit by each stock
         - total equity by stock
         """
+        print(stocks_current_value)
         holdings = self.get_holdings(session)
         
         portfolio_value = 0.0
         for symbol, qty in holdings.items():
             # Use the current value of the stock
-            stock_current_value = stocks_current_value.get(symbol)
+            stock_current_value = stocks_current_value.get(symbol, 0.0)
             
             if stocks_current_value is None:
                 raise ValueError(f"Stock {symbol} not found in current value data.")
@@ -188,15 +190,42 @@ class Trader(Base):
         }
         return stats
 
-    def run_string_action(self, session, action: str, stocks_current_value: Dict[str, float]):
+    def add_thought(self, session, action: str, stock: str, quantity: int, confidence: float, reasoning: str, mode: str):
         """
-        Run a string action on the trader instance.
-        This is a simple way to execute arbitrary actions on the trader instance.
+        Add a reasoning entry to the trader's history.
         """
-        # Create a temporary dictionary to hold the session and trader instance
-        # This is a simple way to expose the session and trader instance to the action
-        action_locals = {"session": session, "trader": self}
-        exec(action, action_locals)
+        thought = Thought(
+            trader=self,
+            action=action,
+            stock=stock,
+            quantity=quantity,
+            confidence=confidence,
+            reasoning=reasoning,
+            mode=mode
+        )
+        session.add(thought)
+        session.commit()
+        
+    def add_thoughts(self, session, thoughts):
+        """
+        Add multiple reasoning entries to the trader's history.
+        """
+        for thought in thoughts:
+            thought = Thought(
+                trader=self,
+                action=thought["action"],
+                stock=thought["stock"],
+                quantity=thought["quantity"],
+                confidence=thought["confidence"],
+                reasoning=thought["reasoning"],
+                mode=thought["mode"]
+            )
+            session.add(thought)
+        session.commit()
+        
+    def get_thoughts(self):
+        """Return a list of all reasoning entries (for convenience)."""
+        return self.thoughts
 class Transaction(Base):
     """
     A Transaction ORM model to record buy/sell events, with a relationship back to the Trader.
@@ -205,6 +234,7 @@ class Transaction(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     trader_id = Column(Integer, ForeignKey("traders.id"), nullable=False)
+    
     symbol = Column(String, nullable=False)
     quantity = Column(Integer, nullable=False)
     price = Column(Float, nullable=False)
@@ -213,6 +243,37 @@ class Transaction(Base):
 
     trader = relationship("Trader", back_populates="transactions")
 
+class Thought(Base):
+    """
+    A model to record one or more 'reasoning' entries associated with a Trader.
+    
+    
+        "action": "BUY|SELL|HOLD",
+        "stock": "SYMBOL",
+        "quantity": 0,
+        "confidence": 0.0,
+        "reasoning": "Brief explanation including position sizing rationale"
+        "timestamp": "2021-01-01T12:00:00Z"
+        "mode": "str"
+        
+    """
+    __tablename__ = "thoughts"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    trader_id = Column(Integer, ForeignKey("traders.id"), nullable=False)
+
+    # For example, "automatic", "manual", "simulation", etc.
+    mode = Column(String, nullable=False, doc="Indicates how or why these reasonings were generated.")
+
+    action = Column(String, nullable=False)
+    stock = Column(String, nullable=False)
+    quantity = Column(Integer, nullable=False)
+    confidence = Column(Float, nullable=False)
+    reasoning = Column(String, nullable=False)
+    timestamp = Column(DateTime, default=datetime.utcnow, nullable=False)
+
+    # Relationship back to Trader
+    trader = relationship("Trader", back_populates="thoughts")
 
 def get_scoped_session(db_url: str = "sqlite:///:memory:"):
     """

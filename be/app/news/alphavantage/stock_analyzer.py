@@ -13,7 +13,7 @@ class StockNewsAnalyzer:
         """
         self.api_rotator = api_rotator
         self.news_cache = {}  # Cache for storing news data
-        self.cache_duration = timedelta(hours=1)  # Cache duration
+        self.cache_duration = timedelta(hours=12)  # Cache duration
         self.cache_timestamps = {}  # Timestamps for cached data
 
     def fetch_news(self, ticker: str) -> Optional[Dict]:

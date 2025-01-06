@@ -7,12 +7,19 @@ import logging
 from pydantic import BaseModel
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from be.app.llmtrader import AIAssistant
 from fastapi.exceptions import HTTPException
+
+from trader.trader import Trader, get_scoped_session
+from time_series.predictor import Predictor
+from social_media_analysis.reddit_sentiment_analysis import get_sentiment_analysis_for_stocks
+from news.news_sentiment import NewsSentimentAnalyzer
+
+from trader.llm_trader import LLMTrader
+
+from context_generator import generate_context
 
 if sys.platform.startswith('win'):
 	asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
 
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'INFO').upper()
 logging.basicConfig(
@@ -24,8 +31,6 @@ logging.basicConfig(
 	]
 )
 
-##### Fast API #####
-
 app = FastAPI()
 app.add_middleware(
 	CORSMiddleware,
@@ -35,50 +40,64 @@ app.add_middleware(
 	allow_headers=["*"],
 )
 
-##### DB #####
-from db.db import DB
-db = DB()
+session = get_scoped_session("sqlite:///db.sqlite")
 
-##### Pydantic Models #####
-class QueryInput(BaseModel):
-	role: str
-	query: str
+# modes : value, growth, momentum, defensive, ideal
+profiles = {
+	"Alice": "value",
+	"Bob": "growth",
+	"Charlie": "momentum",
+	"David": "defensive",
+	"Eve": "ideal"
+}
 
-
-##### REST API #####
-
-@app.post("/query")
-async def set_target(query: QueryInput):
-  try:
-    role = query.role
-    query = query.query
-    # TODO: Implement query execution
-    agent = AIAssistant()
-    response = agent.retrieve_and_answer(query, role)
-    return {"status": "success",
-				"response": response}
-  except Exception as e:
-    logging.error(str(e))
-    return HTTPException(status_code=500, detail=str(e))
+llms = {}
  
-@app.get("/stats")
-async def get_uptime_stats():
-	"""Get system statistics"""
-	try:
-		stats = db.get_summary()
-		return {"status": "success",
-				"stats": stats}
-	except Exception as e:
-		logging.error(str(e))
-		return HTTPException(status_code=500, detail=str(e))
+for name, profile in profiles.items():
+	if not session.query(Trader).filter(Trader.name == name).first():
+		trader = Trader(name=name, balance=10_000)
+		session.add(trader)
+		session.commit()
+	
+	trader = session.query(Trader).filter(Trader.name == name).first()
+	llms[name] = LLMTrader(trader, session, profile)
+
+predictor = Predictor()
+news_analyzer = NewsSentimentAnalyzer() 
 
 
-##### Asyncio Tasks #####
+@app.get("/")
+async def root():
+  # return everything in the database
+  people_performance = {}
+  for name, llm in llms.items():
+    trader = session.query(Trader).filter(Trader.name == name).first()
+    people_performance[name] = trader.get_performance_stats(session, predictor.get_current_prices())
+  
+  people_thoughts = {}
+  for name, llm in llms.items():
+    trader = session.query(Trader).filter(Trader.name == name).first()
+    people_thoughts[name] = trader.get_thoughts()
+  
+  
+  data = {
+		"people": profiles,
+		"people_performance": people_performance,
+		"people_thoughts": people_thoughts,
+		"current_prices": predictor.get_current_prices(),
+		"data_and_forecast": predictor.data_and_forcast(),
+	}
+  
+  return data
+
 
 async def update_loop():
 	while True:
-		db.add_record()
-		await asyncio.sleep(60)
+		await asyncio.sleep(60*60)
+		context = generate_context(predictor, news_analyzer)
+		for name, llm in llms.items():
+			llm.run_decision_making(session=session, context=context, market_data=context["current_prices"])
+		
 
 @app.on_event("startup")
 async def startup_event():
@@ -87,7 +106,6 @@ async def startup_event():
 
 @app.on_event("shutdown")
 async def shutdown_event():
-  db.close()
   logging.info("Application shutdown complete")
 
 
