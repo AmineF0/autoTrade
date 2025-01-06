@@ -10,7 +10,7 @@ The interface showcases five virtual traders: Alice (value), Bob (growth), Charl
 
 .. figure:: ./images/profiles.png
    :alt: Trading Profiles Interface
-   :width: 60%
+   :width: 30%
    :align: center
 
    Profiles
@@ -63,7 +63,7 @@ A trade history including:
 
 .. figure:: ./images/holdings.png
    :alt: Holdings and Trade History
-   :width: 80%
+   :width: 70%
    :align: center
 
    Portfolio holdings and AI trading decisions
