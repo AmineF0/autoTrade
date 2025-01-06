@@ -113,7 +113,7 @@ class LLMTrader:
         """
         self.trader = trader
         import os
-        self.openai_api_key = os.getenv("OPENAI_API_KEY", "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")
+        self.openai_api_key = os.getenv("OPENAI_API_KEY", "")
         # If the user specifies an invalid mode, default to "ideal"
         self.mode = mode if mode in MODES else "ideal"
         self.model = "gpt-4o-mini"  # Example model name (adjust if needed)
