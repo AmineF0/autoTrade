@@ -7,7 +7,7 @@ import logging
 from pydantic import BaseModel
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
-from agent import AIAssistant
+from be.app.llmtrader import AIAssistant
 from fastapi.exceptions import HTTPException
 
 if sys.platform.startswith('win'):

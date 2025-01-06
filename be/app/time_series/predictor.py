@@ -22,24 +22,23 @@ class Predictor:
         forecast = {}
         
         for stock in self.predictors.values():
-            forecast[stock.stock_name] = {}
-            forecast[stock.stock_name][Constants.HOUR] = stock.forecast(n_instances_hour)
-            forecast[stock.stock_name][Constants.DAY] = stock.forecast(n_instances_day)
+            forecast[stock[Constants.HOUR].stock_name] = {}
+            forecast[stock[Constants.HOUR].stock_name][Constants.HOUR] = stock[Constants.HOUR].forecast(n_instances_hour)
+            forecast[stock[Constants.HOUR].stock_name][Constants.DAY] = stock[Constants.DAY].forecast(n_instances_day)
         
         return forecast
     
     def get_current_prices(self):
         prices = {}
         for stock in self.predictors.values():
-            prices[stock.stock_name] = stock.get_current_price()
+            prices[stock[Constants.HOUR].stock_name] = stock[Constants.HOUR].get_current_price()
         return prices
     
     def format_forcast(self, forecast, n_instances_hour:int=24, n_instances_day:int=7):
-        # i want to have the output in the following format :
         """
 
         Args:
-            forecast (_type_): _description_
+            forecast (dict): a dictionary containing the forecast for each stock
 
         Returns:
             str: a summary of the forecast
@@ -64,6 +63,6 @@ class Predictor:
         
         return forecast
     
-    def forcast_and_format(self,n_instances_hour:int=24, n_instances_day:int=7):
+    def forcast_and_format(self,n_instances_hour:int=7, n_instances_day:int=7):
         forecast = self.forecast(n_instances_hour, n_instances_day)
         return self.format_forcast(forecast, n_instances_hour, n_instances_day)
