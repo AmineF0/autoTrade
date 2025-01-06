@@ -1,4 +1,3 @@
-.. _timeseries:
 
 Stock Prediction with Time Series Data
 =========================

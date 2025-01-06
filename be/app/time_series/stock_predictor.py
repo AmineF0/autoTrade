@@ -99,7 +99,7 @@ class StockPredictor:
             validation_split=0.1,
             verbose=0)
 
-        model.save(f'models/{self.stock_name}/LSTM_univariate.h5')
+        model.save(f'models/{self.stock_name}/LSTM_univariate_{self.period}_{self.interval}.h5')
      
     def train_lstm_multivariante(self):
         scaler = MinMaxScaler()
@@ -122,7 +122,7 @@ class StockPredictor:
             validation_split=0.1,
             verbose=0)
 
-        model.save(f'models/{self.stock_name}/LSTM_multivariate.h5')   
+        model.save(f'models/{self.stock_name}/LSTM_multivariate_{self.period}_{self.interval}.h5')   
         
     def train_mlp_univariante(self):
         scaler = MinMaxScaler()
@@ -143,12 +143,12 @@ class StockPredictor:
         model.fit(X_train.reshape(X_train.shape[0],-1), y_train)
         output_dir = f'models/{self.stock_name}'
         os.makedirs(output_dir, exist_ok=True)
-        with open(f'models/{self.stock_name}/MLP_univaraite.pkl', 'wb') as file:
+        with open(f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl', 'wb') as file:
             pickle.dump(model, file)
     
     def model_expiry(self):
         EXPIRY_CST = 2*60*60
-        models = ["MLP_univaraite","LSTM_univariate","LSTM_multivariate"]
+        models = [f"MLP_univaraite__{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",f"LSTM_multivariate_{self.period}_{self.interval}"]
         # check if json file with name models_manager exist in models folder 
         if not os.path.exists(f'models/{self.stock_name}/models_manager.json'):
             return True
@@ -175,16 +175,16 @@ class StockPredictor:
             self.train_lstm_multivariante()
             self.train_mlp_univariante()
             data = {
-                    "MLP_univaraite":{
-                        'path':f'models/{self.stock_name}/MLP_univaraite.pkl',
+                    f"MLP_univaraite_{self.period}_{self.interval}":{
+                        'path':f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl',
                         "creation_date":dt.datetime.now().timestamp()
                     },
-                    "LSTM_univariate":{
-                        'path':f'models/{self.stock_name}/LSTM_univariate.h5',
+                    f"LSTM_univariate_{self.period}_{self.interval}.h5":{
+                        'path':f'models/{self.stock_name}/LSTM_univariate_{self.period}_{self.interval}.h5',
                         "creation_date":dt.datetime.now().timestamp()
                     },
-                    "LSTM_multivariate":{
-                        'path':f'models/{self.stock_name}/LSTM_multivariate.h5',
+                    f"LSTM_multivariate_{self.period}_{self.interval}":{
+                        'path':f'models/{self.stock_name}/LSTM_multivariate_{self.period}_{self.interval}.h5',
                         "creation_date":dt.datetime.now().timestamp()
                     }
                 }
@@ -192,8 +192,8 @@ class StockPredictor:
                 json.dump(data, file)
             
     
-    def forecast_lstm_univariante(self,n_hours:int=7):
-        model_dir = f'models/{self.stock_name}/LSTM_univariate.h5'
+    def forecast_lstm_univariante(self,n_instances:int=7):
+        model_dir = f'models/{self.stock_name}/LSTM_univariate_{self.period}_{self.interval}.h5'
         model = tf.keras.models.load_model(model_dir)
         forecast = []
         data_close = self.data['Close']
@@ -207,15 +207,15 @@ class StockPredictor:
         y_scaler.fit(df_target)
         df_target = y_scaler.transform(df_target)
         X = df_windowed[-1]
-        for i in range(n_hours):
+        for i in range(n_instances):
             X = X.reshape(1, X.shape[0], X.shape[1])
             y_pred = model.predict(X)
             forecast.append(y_pred)
             X = np.concatenate((X[0][1:], y_pred))
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
-    def forecast_lstm_multivariante(self,n_hours:int=7):
-        model_dir = f'models/{self.stock_name}/LSTM_multivariate.h5'
+    def forecast_lstm_multivariante(self,n_instances:int=7):
+        model_dir = f'models/{self.stock_name}/LSTM_multivariate_{self.period}_{self.interval}.h5'
         model = tf.keras.models.load_model(model_dir)
         ## forecast for n hours
         forecast = []
@@ -231,7 +231,7 @@ class StockPredictor:
         y_scaler.fit(df_target)
         df_target = y_scaler.transform(df_target)
         X = df_windowed[-1]
-        for i in range(n_hours):
+        for i in range(n_instances):
             X = X.reshape(1, X.shape[0], X.shape[1])
             y_pred = model.predict(X)
             forecast.append(y_pred)
@@ -240,8 +240,8 @@ class StockPredictor:
             X = np.concatenate((X[0][1:], y_pred_expanded), axis=0)
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
-    def forecast_mlp_univariate(self,n_hours):
-        model_dir = f'models/{self.stock_name}/MLP_univaraite.pkl'
+    def forecast_mlp_univariate(self,n_instances):
+        model_dir = f'models/{self.stock_name}/MLP_univaraite_{self.period}_{self.interval}.pkl'
         with open(model_dir, 'rb') as file:
             model = pickle.load(file)
         data_close = self.data['Close']
@@ -256,18 +256,18 @@ class StockPredictor:
         df_target = y_scaler.transform(df_target)
         X = df_windowed[-1]
         forecast = []
-        for i in range(n_hours):
+        for i in range(n_instances):
             y_pred = model.predict(X.reshape(1, -1)).reshape(-1, 1)
             forecast.append(y_pred)
             X = np.concatenate((X[1:], y_pred))
         return y_scaler.inverse_transform(np.array(forecast).reshape(-1, 1))
     
     
-    def forecast_nhours(self,n_hours:int=7):
+    def forecast(self,n_instances:int=7):
         return {
-            'LSTM_univariate':self.forecast_lstm_univariante(n_hours),
-            'LSTM_multivariate':self.forecast_lstm_multivariante(n_hours),
-            'MLP_univariate':self.forecast_mlp_univariate(n_hours)
+            'LSTM_univariate':self.forecast_lstm_univariante(n_instances),
+            'LSTM_multivariate':self.forecast_lstm_multivariante(n_instances),
+            'MLP_univariate':self.forecast_mlp_univariate(n_instances)
         }
     
 
