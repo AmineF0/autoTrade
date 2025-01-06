@@ -95,7 +95,7 @@ class StockPredictor:
         X_test = df_windowed[train_size:]
         y_test = df_target[train_size:]
         model = self.build_lstm_model(X_train)
-        model.fit(X_train, y_train, epochs=100,batch_size=32,    
+        model.fit(X_train, y_train, epochs=50,batch_size=32,    
             validation_split=0.1,
             verbose=0)
 
@@ -118,7 +118,7 @@ class StockPredictor:
         X_test = df_windowed[train_size:]
         y_test = df_target[train_size:]
         model = self.build_lstm_model(X_train)
-        model.fit(X_train, y_train, epochs=100,batch_size=32,    
+        model.fit(X_train, y_train, epochs=50,batch_size=32,    
             validation_split=0.1,
             verbose=0)
 
@@ -148,7 +148,7 @@ class StockPredictor:
     
     def model_expiry(self):
         EXPIRY_CST = 2*60*60
-        models = [f"MLP_univariate__{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",
+        models = [f"MLP_univariate_{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",
                 #   f"LSTM_multivariate_{self.period}_{self.interval}"
                 ]
         # check if json file with name models_manager exist in models folder 
@@ -181,7 +181,7 @@ class StockPredictor:
                         'path':f'models/{self.stock_name}/MLP_univariate_{self.period}_{self.interval}.pkl',
                         "creation_date":dt.datetime.now().timestamp()
                     },
-                    f"LSTM_univariate_{self.period}_{self.interval}.h5":{
+                    f"LSTM_univariate_{self.period}_{self.interval}":{
                         'path':f'models/{self.stock_name}/LSTM_univariate_{self.period}_{self.interval}.h5',
                         "creation_date":dt.datetime.now().timestamp()
                     },

@@ -1,1 +1,0 @@
-{"AAPL": {"MLP_univaraite": {"path": "models/{self.stock_name}/MLP_univaraite.pkl", "creation_date": 1736102897.50253}, "LSTM_univariate": {"path": "models/{self.stock_name}/LSTM_univariate.h5", "creation_date": 1736102897.50253}, "LSTM_multivariate": {"path": "models/{self.stock_name}/LSTM_multivariate.h5", "creation_date": 1736102897.50253}}}
