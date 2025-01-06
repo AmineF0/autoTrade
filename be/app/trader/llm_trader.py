@@ -1,40 +1,40 @@
 import json
 from typing import Dict, Any, List, Optional
 from sqlalchemy.orm import Session
+import openai
 
 # Example modes mapped to hypothetical strategy prompts
 MODES = {
     "value": (
         "You are a meticulous value investor. "
         "Look for undervalued companies with strong fundamentals. "
-        "Generate a JSON array of trade actions in this format: "
-        '[{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]'
     ),
     "growth": (
         "You are an aggressive growth investor. "
         "Focus on high-growth companies, even with high valuations. "
-        "Generate a JSON array of trade actions in this format: "
-        '[{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]'
     ),
     "momentum": (
         "You are a momentum trader. "
         "Focus on recent winners that show strong price momentum. "
-        "Generate a JSON array of trade actions in this format: "
-        '[{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]'
+
     ),
     "defensive": (
         "You are a defensive investor. "
         "Focus on stable, dividend-paying stocks with low volatility. "
-        "Generate a JSON array of trade actions in this format: "
-        '[{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]'
     ),
     "ideal": (
         "You combine value, growth, momentum, and defensive tactics "
         "to create an optimal balanced approach. "
-        "Generate a JSON array of trade actions in this format: "
-        '[{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]'
     ),
 }
+
+output_format_prompt = """
+    Return valid JSON in the specified format, no extra text.\n
+    Generate a JSON array of trade actions in this format: 
+    [{"action": "BUY|SELL|HOLD", "stock": "SYM", "quantity": N}, ...]
+    THIS FORMAT IS MANDATORY
+"""
+
 
 openai_api_key = "your-open_ai_api_key_here"
 
@@ -65,20 +65,16 @@ class LLMTrader:
            ]
         3. Parse and execute those actions by calling the underlying Trader's buy/sell methods.
         """
-        # 1. Build prompt
-        prompt = self._build_prompt(market_data)
 
-        # 2. Call OpenAI (mocked here) to get JSON plan
+        prompt = self._build_prompt(market_data)
         plan_json = self._call_openai_api(prompt)
 
-        # 3. Parse the plan
         try:
             plan = json.loads(plan_json)
         except json.JSONDecodeError:
             print("[LLMTrader] Error parsing JSON from OpenAI.")
             return
 
-        # 4. Execute the plan
         for item in plan:
             action = item.get("action", "HOLD").upper()
             stock = item.get("stock")
@@ -116,23 +112,22 @@ class LLMTrader:
         final_prompt = (
             f"{base_prompt}\n\n"
             f"Market Data: {market_data_str}.\n\n"
-            "Return valid JSON in the specified format, no extra text.\n"
+            f"{output_format_prompt}"
         )
         return final_prompt
 
     def _call_openai_api(self, prompt: str) -> str:
         """
-        Placeholder method for calling OpenAI. 
-        In reality, you'd use 'openai.ChatCompletion.create' or a similar method.
+        Call the OpenAI API to get a response for the given prompt.
+        """
+        print(f"[LLMTrader] calling OpenAI with prompt: {prompt}\n")
 
-        We'll mock the response as a hard-coded JSON string for demonstration.
-        """
-        print(f"[LLMTrader] (Mock) calling OpenAI with prompt: {prompt}\n")
-        # Mocked JSON response (imagine it came from OpenAI)
-        mocked_response_json = """
-        [
-          { "action": "BUY",  "stock": "AAPL", "quantity": 5 },
-          { "action": "SELL", "stock": "TSLA", "quantity": 2 }
-        ]
-        """
-        return mocked_response_json
+        # tge actual call would be something like:
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": prompt},
+            ],
+        )
+        
+        return response.choices[0].message['content']
