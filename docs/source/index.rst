@@ -19,6 +19,7 @@ Contents
    news_sentiment_analysis
    Reddit_Sentiment_Analyzer
    timeseries
+   ui
    perspective
    modules
    
