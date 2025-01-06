@@ -1,6 +1,10 @@
 # Configuration file for the Sphinx documentation builder.
 
 # -- Project information
+import os 
+import sys 
+
+sys.path.insert(0,os.path.abspath("../../be"))
 
 project = 'AutoTrade'
 copyright = '2024, ENSAM'
@@ -17,7 +21,11 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autodoc'
 ]
+
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
