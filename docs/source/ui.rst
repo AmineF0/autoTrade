@@ -8,7 +8,7 @@ Trading Profiles and Performance Display
 
 The interface showcases five virtual traders: Alice (value), Bob (growth), Charlie (momentum), David (defensive), and Eve (ideal). Each profile maintains its own portfolio and trading strategy.
 
-.. figure:: /images/profiles.png
+.. figure:: ./images/profiles.png
    :alt: Trading Profiles Interface
    :width: 60%
    :align: center
@@ -34,7 +34,7 @@ For each tracked stock (e.g., AMZN, MSFT), the interface displays:
 * Historical price charts with interactive timelines
 * Price projections with confidence intervals (0-100% scale)
 
-.. figure:: /images/dashboard.png
+.. figure:: ./images/dashboard.png
    :alt: Portfolio Analytics
    :width: 70%
    :align: center
@@ -61,7 +61,7 @@ A trade history including:
 * Confidence level (e.g., 85.0% for MSFT buy)
 * AI reasoning for trades (e.g., "MSFT has positive sentiment in Reddit posts and strong long-term forecasts")
 
-.. figure:: /images/holdings.png
+.. figure:: ./images/holdings.png
    :alt: Holdings and Trade History
    :width: 80%
    :align: center
