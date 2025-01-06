@@ -5,10 +5,8 @@ Welcome to AUTOtrade's documentation!
 
 The system aggregates data from news sources, Reddit discussions, and historical market data to provide comprehensive market insights through an *intuitive* and *data-driven* approach.
 
+Here you find the Specifications Document: https://github.com/AmineF0/autoTrade/blob/main/AutoTrade.pdf .
 
-.. note::
-
-   This project is under active development.
 
 Contents
 --------
