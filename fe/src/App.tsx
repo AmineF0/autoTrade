@@ -1,68 +1,77 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { Dashboard } from './components/Dashboard';
-import { Header } from './components/Header';
-import { Stats, Role } from './types';
-import toast, { Toaster } from 'react-hot-toast';
-import { fetchStats } from './utils/api';
-import { ThemeProvider } from './components/ThemeProvider';
-import { ThreeDView } from './components/3d/ThreeDView';
+import React, { useState } from 'react';
+import { LayoutGrid } from 'lucide-react';
+import { StockChart } from './components/StockChart';
+import { PortfolioMetrics } from './components/PortfolioMetrics';
+import { TradeHistory } from './components/TradeHistory';
+import { Holdings } from './components/Holdings';
+import { UserSelector } from './components/UserSelector';
+import { useTradingData } from './hooks/useTradingData';
 
-export default function App() {
-  const [stats, setStats] = useState<Stats | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [role, setRole] = useState<Role>('manager');
+const STOCKS = ['AMZN', 'MSFT', 'TSLA', 'NVDA'];
 
-  useEffect(() => {
-    const loadStats = async () => {
-      const { data, error } = await fetchStats();
-      if (error) {
-        setError(error);
-        toast.error(error);
-      } else {
-        setStats(data);
-      }
-    };
+function App() {
+  const { loading, error, users, stocksData } = useTradingData();
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
 
-    loadStats();
-    const interval = setInterval(loadStats, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (error) {
+  if (loading) {
     return (
-      <ThemeProvider>
-        <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-          <p className="text-red-500">{error}</p>
-        </div>
-      </ThemeProvider>
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
     );
   }
 
-  if (!stats) {
+  if (error) {
     return (
-      <ThemeProvider>
-        <div className="min-h-screen flex items-center justify-center dark:bg-gray-900">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600" />
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="bg-red-50 text-red-700 p-4 rounded-lg">
+          {error.message}
         </div>
-      </ThemeProvider>
+      </div>
     );
   }
 
   return (
-    <ThemeProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
-          <Header role={role} onRoleChange={setRole} />
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <Routes>
-              <Route path="/" element={<Dashboard stats={stats} role={role} />} />
-              <Route path="/3d" element={<ThreeDView stats={stats} />} />
-            </Routes>
-          </main>
-          <Toaster position="top-right" />
+    <div className="min-h-screen bg-gray-100">
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <LayoutGrid className="h-8 w-8 text-blue-500 mr-3" />
+              <h1 className="text-2xl font-bold text-gray-900">Trading Portfolio</h1>
+            </div>
+            <UserSelector
+              users={users}
+              selectedUserId={selectedUserId}
+              onUserChange={setSelectedUserId}
+            />
+          </div>
         </div>
-      </BrowserRouter>
-    </ThemeProvider>
+      </header>
+
+      <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <div className="space-y-6">
+          {selectedUserId && (
+            <>
+              <PortfolioMetrics userId={selectedUserId} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {STOCKS.map(symbol => (
+                  <StockChart 
+                    key={symbol}
+                    data={stocksData[symbol]}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Holdings userId={selectedUserId} />
+                <TradeHistory userId={selectedUserId} />
+              </div>
+            </>
+          )}
+        </div>
+      </main>
+    </div>
   );
 }
+
+export default App;

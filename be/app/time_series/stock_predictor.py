@@ -17,7 +17,7 @@ EXPIRY_CST = 12*60*60
 
 
 class StockPredictor:
-    def __init__(self,stock_name='AAPL',interval="1h",period="2y",split_ratio=1,window_size=6):
+    def __init__(self,stock_name='AAPL',interval="1h",period="1y",split_ratio=1,window_size=6):
         self.stock_name = stock_name
         self.split_ratio = split_ratio
         self.period = period
@@ -31,8 +31,7 @@ class StockPredictor:
     def get_stock_data(self):
         stock_data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         stock_data = stock_data.dropna()
-        cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        stock_data.columns = cols
+        stock_data.columns = stock_data.columns.droplevel(1) 
         return stock_data
     
     def window_data_univariate(self,data, window_size):
@@ -287,14 +286,23 @@ class StockPredictor:
         forecast = self.forecast(n_instances)
         self.cache = {
             "cache_data":{
-                "data":data,
-                "forecast":forecast
+            # 'data':data["Close"].tolist()[-100:],
+            'forecast': {
+                'LSTM_univariate': # flatten forcast['LSTM_univariate']
+                    [  item[0].item() for item in forecast['LSTM_univariate']],
+                'MLP_univariate': [item[0].item() for item in forecast['MLP_univariate']]
+            }
             }, 
             "creation_date":dt.datetime.now().timestamp()
         }
+        print(forecast)
         return {
-            'data':data,
-            'forecast':forecast
+            # 'data':data["Close"].tolist()[-100:],
+            'forecast': {
+                'LSTM_univariate': # flatten forcast['LSTM_univariate']
+                    [  item[0].item() for item in forecast['LSTM_univariate']],
+                'MLP_univariate': [item[0].item() for item in forecast['MLP_univariate']]
+            }
         }
     
 

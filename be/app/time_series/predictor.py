@@ -72,12 +72,16 @@ class Predictor:
         return self.format_forcast(forecast, n_instances_hour, n_instances_day)
     
     def data_and_forcast(self, n_instances_hour:int=7, n_instances_day:int=7):
-        data = {}
-        for stock in self.predictors.values():
-            data[stock[Constants.HOUR].stock_name] = {}
-            data[stock[Constants.HOUR].stock_name][Constants.HOUR] = stock[Constants.HOUR].data_and_forcast()
-            data[stock[Constants.HOUR].stock_name][Constants.DAY] = stock[Constants.DAY].data_and_forcast()
-        return parse_dict_with_numpy_recursive(data)
+        try:
+            data = {}
+            for stock in self.predictors.values():
+                data[stock[Constants.HOUR].stock_name] = {}
+                data[stock[Constants.HOUR].stock_name][Constants.HOUR] = stock[Constants.HOUR].data_and_forcast()
+                data[stock[Constants.HOUR].stock_name][Constants.DAY] = stock[Constants.DAY].data_and_forcast()
+            print(parse_dict_with_numpy_recursive(data))
+            return parse_dict_with_numpy_recursive(data)
+        except Exception as e:
+            return str(e)
     
 import numpy as np
 def parse_dict_with_numpy_recursive(d):
