@@ -22,4 +22,5 @@ Contents
    Reddit_Sentiment_Analyzer
    timeseries
    perspective
+   modules
    
