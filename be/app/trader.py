@@ -154,7 +154,6 @@ class Trader(Base):
                 realized_profit_by_stock[tx.symbol] = realized_profit_by_stock.get(tx.symbol, 0.0) - tx.price * tx.quantity
         return realized_profit_by_stock
         
-
     def get_performance_stats(self, session, stocks_current_value) -> Dict[str, Any]:
         """
         Return some basic performance stats, e.g.:
@@ -189,7 +188,15 @@ class Trader(Base):
         }
         return stats
 
-
+    def run_string_action(self, session, action: str, stocks_current_value: Dict[str, float]):
+        """
+        Run a string action on the trader instance.
+        This is a simple way to execute arbitrary actions on the trader instance.
+        """
+        # Create a temporary dictionary to hold the session and trader instance
+        # This is a simple way to expose the session and trader instance to the action
+        action_locals = {"session": session, "trader": self}
+        exec(action, action_locals)
 class Transaction(Base):
     """
     A Transaction ORM model to record buy/sell events, with a relationship back to the Trader.
