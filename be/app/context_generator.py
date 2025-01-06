@@ -33,7 +33,8 @@ def generate_context(trader: Trader, session, predictor: Predictor, news_analyze
         "performance_stats": performance_stats,
         "forecast": forecast,
         "sentiment_analysis": sentiment_analysis,
-        "news_sentiment": news_analyzer.compare_sentiment_stocks()
+        "news_sentiment": news_analyzer.compare_sentiment_stocks(),
+        "current_prices": predictor.get_current_prices()
     }
     
     
