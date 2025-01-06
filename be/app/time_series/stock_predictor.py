@@ -13,10 +13,11 @@ import json
 import warnings
 
 warnings.filterwarnings("ignore")
+EXPIRY_CST = 12*60*60
 
 
 class StockPredictor:
-    def __init__(self,stock_name='AAPL',interval="1h",period="2y",split_ratio=1,window_size=6):
+    def __init__(self,stock_name='AAPL',interval="1h",period="1y",split_ratio=1,window_size=6):
         self.stock_name = stock_name
         self.split_ratio = split_ratio
         self.period = period
@@ -25,12 +26,12 @@ class StockPredictor:
         self.data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         self.data = self.data.dropna()
         self.data.columns = self.data.columns.droplevel(1) 
+        self.cache = None
     
     def get_stock_data(self):
         stock_data = yf.download(self.stock_name, period=self.period,interval=self.interval)
         stock_data = stock_data.dropna()
-        cols = ['Open', 'High', 'Low', 'Close', 'Volume']
-        stock_data.columns = cols
+        stock_data.columns = stock_data.columns.droplevel(1) 
         return stock_data
     
     def window_data_univariate(self,data, window_size):
@@ -77,7 +78,7 @@ class StockPredictor:
     
     def get_current_price(self):
         stock_data = yf.download(self.stock_name, period='2y',interval='1h')
-        return stock_data['Close'].to_numpy()[-1]
+        return stock_data['Close'].to_numpy()[-1][0]
     
     def train_lstm_univariate(self):
         scaler = MinMaxScaler()
@@ -147,7 +148,6 @@ class StockPredictor:
             pickle.dump(model, file)
     
     def model_expiry(self):
-        EXPIRY_CST = 2*60*60
         models = [f"MLP_univariate_{self.period}_{self.interval}",f"LSTM_univariate_{self.period}_{self.interval}",
                 #   f"LSTM_multivariate_{self.period}_{self.interval}"
                 ]
@@ -270,6 +270,39 @@ class StockPredictor:
             'LSTM_univariate':self.forecast_lstm_univariante(n_instances),
             # 'LSTM_multivariate':self.forecast_lstm_multivariante(n_instances),
             'MLP_univariate':self.forecast_mlp_univariate(n_instances)
+        }
+        
+    def data_and_forcast(self,n_instances:int=7):
+        
+        if self.cache is not None:
+            creation_date = self.cache['creation_date']
+            creation_date = dt.datetime.fromtimestamp(creation_date)
+            now = dt.datetime.now()
+            diff = (now - creation_date).total_seconds()
+            if diff < EXPIRY_CST:
+                return self.cache['cache_data']
+        
+        data = self.get_stock_data()
+        forecast = self.forecast(n_instances)
+        self.cache = {
+            "cache_data":{
+            # 'data':data["Close"].tolist()[-100:],
+            'forecast': {
+                'LSTM_univariate': # flatten forcast['LSTM_univariate']
+                    [  item[0].item() for item in forecast['LSTM_univariate']],
+                'MLP_univariate': [item[0].item() for item in forecast['MLP_univariate']]
+            }
+            }, 
+            "creation_date":dt.datetime.now().timestamp()
+        }
+        print(forecast)
+        return {
+            # 'data':data["Close"].tolist()[-100:],
+            'forecast': {
+                'LSTM_univariate': # flatten forcast['LSTM_univariate']
+                    [  item[0].item() for item in forecast['LSTM_univariate']],
+                'MLP_univariate': [item[0].item() for item in forecast['MLP_univariate']]
+            }
         }
     
 

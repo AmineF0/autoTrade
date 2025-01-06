@@ -3,35 +3,23 @@ from time_series.predictor import Predictor
 from social_media_analysis.reddit_sentiment_analysis import get_sentiment_analysis_for_stocks
 from news.news_sentiment import NewsSentimentAnalyzer
 
-def generate_context(trader: Trader, session, predictor: Predictor, news_analyzer: NewsSentimentAnalyzer):
+from trader.llm_trader import LLMTrader
+
+def generate_context(predictor: Predictor, news_analyzer: NewsSentimentAnalyzer):
     """
     Generate context for the dashboard.
     """
     predictor.train(force=False)
-    
-    # Get performance stats
-    performance_stats = trader.get_performance_stats(session, predictor.get_current_prices())
-    
+        
     return {
-        "trade_summary": {
-            "current_balance": performance_stats["current_balance"],
-            "realized_profit": performance_stats["realized_profit"],
-            "portfolio_value": performance_stats["portfolio_value"],
-            "total_equity": performance_stats["total_equity"],
-            "holdings": performance_stats["holdings"],
-            "holdings_value": performance_stats["holdings_value"],
-            "realized_profit_by_stock": performance_stats["realized_profit_by_stock"],
-            "current_prices": predictor.get_current_prices()
-        },
         "sentiment_analysis": {
             "reddit": get_sentiment_analysis_for_stocks(),
             "news": news_analyzer.compare_sentiment_stocks()
         },
         "forecast": predictor.forcast_and_format(),
+        "current_prices": predictor.get_current_prices()
     }
-    
-    
-    
+
 if __name__ == "__main__":
     session = get_scoped_session("sqlite:///db.sqlite")
 
@@ -45,5 +33,8 @@ if __name__ == "__main__":
       
     predictor = Predictor()
     news_analyzer = NewsSentimentAnalyzer() 
-    context = generate_context(trader, session, predictor, news_analyzer)
+    context = generate_context(predictor, news_analyzer)
     print(context)
+    llmTrader = LLMTrader(trader, session)
+    
+    llmTrader.run_decision_making(session=session, context=context, market_data=context["current_prices"])
