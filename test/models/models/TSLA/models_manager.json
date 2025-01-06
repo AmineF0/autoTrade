@@ -1,1 +1,0 @@
-{"MLP_univaraite": {"path": "models/TSLA/MLP_univaraite.pkl", "creation_date": 1736106736.29956}, "LSTM_univariate": {"path": "models/TSLA/LSTM_univariate.h5", "creation_date": 1736106736.29956}, "LSTM_multivariate": {"path": "models/TSLA/LSTM_multivariate.h5", "creation_date": 1736106736.29956}}

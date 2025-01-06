@@ -1,1 +1,0 @@
-{"MLP_univaraite": {"path": "models/MSFT/MLP_univaraite.pkl", "creation_date": 1736106580.989785}, "LSTM_univariate": {"path": "models/MSFT/LSTM_univariate.h5", "creation_date": 1736106580.990792}, "LSTM_multivariate": {"path": "models/MSFT/LSTM_multivariate.h5", "creation_date": 1736106580.990792}}

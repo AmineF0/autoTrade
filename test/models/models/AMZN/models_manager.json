@@ -1,1 +1,0 @@
-{"MLP_univaraite": {"path": "models/AMZN/MLP_univaraite.pkl", "creation_date": 1736106274.405819}, "LSTM_univariate": {"path": "models/AMZN/LSTM_univariate.h5", "creation_date": 1736106274.405819}, "LSTM_multivariate": {"path": "models/AMZN/LSTM_multivariate.h5", "creation_date": 1736106274.405819}}
